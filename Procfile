@@ -1,1 +1,1 @@
-web: python app.py
+web: python smart_home.py
