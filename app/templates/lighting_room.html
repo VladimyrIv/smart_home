@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Освітлення в {{ room.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Освітлення в {{ room.name }}</h2>
+    <div class="list-group">
+        {% for device in devices %}
+        <div class="list-group-item">
+            <h5>{{ device.name }}</h5>
+            <p>Статус: {{ 'Увімкнено' if device.status == 'on' else 'Вимкнено' }}</p>
+            <button class="btn btn-primary">{{ 'Увімкнути' if device.status == 'off' else 'Вимкнути' }}</button>
+            <input type="range" class="form-range mt-3" min="0" max="100" value="50"> Яскравість
+            <a href="{{ url_for('lighting_settings', device_id=device.id) }}" class="btn btn-secondary mt-3">Налаштування</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

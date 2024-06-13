@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Налаштування освітлення для {{ device.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Налаштування освітлення для {{ device.name }}</h2>
+    <form method="post" action="{{ url_for('save_lighting_settings', device_id=device.id) }}">
+        <div class="form-group">
+            <label for="light_level">Рівень освітленості</label>
+            <input type="number" class="form-control" id="light_level" name="light_level" value="{{ settings.light_level }}">
+        </div>
+        <div class="form-group">
+            <label for="motion_detected">Датчик руху</label>
+            <input type="checkbox" class="form-check-input" id="motion_detected" name="motion_detected" {% if settings.motion_detected %}checked{% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="presence_detected">Датчик присутності</label>
+            <input type="checkbox" class="form-check-input" id="presence_detected" name="presence_detected" {% if settings.presence_detected %}checked{% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="auto_on">Автоматичне увімкнення</label>
+            <input type="checkbox" class="form-check-input" id="auto_on" name="auto_on" {% if settings.auto_on %}checked{% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="auto_off">Автоматичне вимкнення</label>
+            <input type="checkbox" class="form-check-input" id="auto_off" name="auto_off" {% if settings.auto_off %}checked{% endif %}>
+        </div>
+        <button type="submit" class="btn btn-primary">Зберегти</button>
+    </form>
+</div>
+{% endblock %}

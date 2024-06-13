@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Керування освітленням{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Керування освітленням</h2>
+    <div class="list-group">
+        {% for room in rooms %}
+        <a href="{{ url_for('lighting_room', room_id=room.id) }}" class="list-group-item list-group-item-action">
+            {{ room.name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

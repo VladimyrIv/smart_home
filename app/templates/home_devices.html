@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Пристрої в будинку{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Пристрої в будинку: {{ home.name }}</h2>
+
+    <div class="mt-4">
+        <h3>Освітлення</h3>
+        {% if lighting_devices %}
+            <ul class="list-group">
+                {% for device in lighting_devices %}
+                <li class="list-group-item">
+                    <h5>{{ device.name }} ({{ device.room.name }})</h5>
+                    <div>
+                        <button class="btn btn-secondary" onclick="toggleLight('{{ device.id }}', '{{ device.is_on }}')">
+                            {{ 'Вимкнути' if device.is_on else 'Увімкнути' }}
+                        </button>
+                        <input type="range" min="0" max="100" value="{{ device.brightness }}" id="brightness_{{ device.id }}" onchange="setBrightness('{{ device.id }}', this.value)">
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає пристроїв освітлення</p>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <h3>Клімат-контроль</h3>
+        {% if climate_devices %}
+            <ul class="list-group">
+                {% for device in climate_devices %}
+                <li class="list-group-item">
+                    <h5>{{ device.name }} ({{ device.room.name }})</h5>
+                    <p>Температура: {{ device.temperature }} °C</p>
+                    <p>Вологість: {{ device.humidity }} %</p>
+                    <div>
+                        <input type="number" value="{{ device.set_temperature }}" id="temperature_{{ device.id }}">
+                        <button class="btn btn-secondary" onclick="setTemperature('{{ device.id }}', document.getElementById('temperature_{{ device.id }}').value)">Встановити температуру</button>
+                        <button class="btn btn-secondary" onclick="toggleClimate('{{ device.id }}', '{{ device.is_on }}')">
+                            {{ 'Вимкнути' if device.is_on else 'Увімкнути' }}
+                        </button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає пристроїв клімат-контролю</p>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <h3>Дані з датчиків</h3>
+        <div class="sensor-data">
+            <p>Температура: <span id="temperature">--</span> °C</p>
+            <p>Вологість: <span id="humidity">--</span> %</p>
+            <p>Стан безпеки: <span id="security">--</span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleLight(deviceId, currentState) {
+    fetch(`/api/device/${deviceId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();  // Перезавантажити сторінку, щоб відобразити зміни
+        } else {
+            alert('Не вдалося змінити стан освітлення');
+        }
+    });
+}
+
+function setBrightness(deviceId, brightness) {
+    fetch(`/api/device/${deviceId}/set_brightness`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({brightness: brightness})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert('Не вдалося змінити яскравість освітлення');
+        }
+    });
+}
+
+function setTemperature(deviceId, temperature) {
+    fetch(`/api/device/${deviceId}/set_temperature`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({temperature: temperature})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert('Не вдалося змінити температуру');
+        }
+    });
+}
+
+function toggleClimate(deviceId, currentState) {
+    fetch(`/api/device/${deviceId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();  // Перезавантажити сторінку, щоб відобразити зміни
+        } else {
+            alert('Не вдалося змінити стан клімат-контролю');
+        }
+    });
+}
+
+// Симуляція даних з датчиків
+function updateSensorData() {
+    // Випадкові значення для температури та вологості
+    var temperature = (Math.random() * 40).toFixed(1);
+    var humidity = (Math.random() * 100).toFixed(1);
+    var security = Math.random() > 0.5 ? 'В безпеці' : 'Небезпечно';
+
+    // Оновлення відображення даних на сторінці
+    document.getElementById('temperature').innerText = temperature;
+    document.getElementById('humidity').innerText = humidity;
+    document.getElementById('security').innerText = security;
+}
+
+// Оновлюємо дані кожні 5 секунд
+setInterval(updateSensorData, 5000);
+</script>
+{% endblock %}

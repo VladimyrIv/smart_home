@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Деталі кімнати{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Кімната: {{ room.name }}</h2>
+
+    <div class="mt-4">
+        <h3>Освітлення</h3>
+        {% if lighting_devices %}
+            <ul class="list-group">
+                {% for device in lighting_devices %}
+                <li class="list-group-item">
+                    <h5>{{ device.name }}</h5>
+                    <div>
+                        <button class="btn btn-secondary" onclick="toggleLight('{{ device.id }}', '{{ device.is_on }}')">
+                            {{ 'Вимкнути' if device.is_on else 'Увімкнути' }}
+                        </button>
+                        <input type="range" min="0" max="100" value="{{ device.brightness }}" id="brightness_{{ device.id }}" onchange="setBrightness('{{ device.id }}', this.value)">
+                        <button class="btn btn-danger" onclick="deleteDevice('{{ device.id }}')">Видалити</button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Немає пристроїв освітлення</p>
+        {% endif %}
+        <a href="{{ url_for('add_device', room_id=room.id, device_type='lighting') }}" class="btn btn-primary mt-3">Додати пристрій освітлення</a>
+    </div>
+</div>
+
+<script>
+function toggleLight(deviceId, currentState) {
+    fetch(`/api/device/${deviceId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();  // Reload the page to reflect the change
+        } else {
+            alert('Не вдалося змінити стан освітлення');
+        }
+    });
+}
+
+function setBrightness(deviceId, brightness) {
+    fetch(`/api/device/${deviceId}/set_brightness`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({brightness: brightness})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert('Не вдалося змінити яскравість освітлення');
+        }
+    });
+}
+
+function deleteDevice(deviceId) {
+    if (confirm("Ви впевнені, що хочете видалити цей пристрій?")) {
+        fetch(`/api/device/${deviceId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();  // Reload the page to reflect the change
+            } else {
+                alert('Не вдалося видалити пристрій');
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Додати {{ device_type }} пристрій{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Додати {{ device_type }} пристрій</h2>
+    <form method="post" action="{{ url_for('add_device', room_id=room_id, device_type=device_type) }}">
+        <div class="form-group">
+            <label for="name">Назва пристрою</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Додати</button>
+    </form>
+</div>
+{% endblock %}

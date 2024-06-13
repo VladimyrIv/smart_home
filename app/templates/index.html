@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Мої будинки{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Мої будинки</h2>
+    <div class="mb-4">
+        <a href="{{ url_for('add_home') }}" class="btn btn-primary">Додати новий будинок</a>
+    </div>
+    {% for home in homes %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">{{ home.name }}</h5>
+            <p class="card-text">{{ home.address }}</p>
+            <a href="{{ url_for('home_details', home_id=home.id) }}" class="btn btn-primary">Переглянути</a>
+            <a href="{{ url_for('edit_home', home_id=home.id) }}" class="btn btn-secondary">Редагувати</a>
+            <a href="{{ url_for('delete_home', home_id=home.id) }}" class="btn btn-danger">Видалити</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

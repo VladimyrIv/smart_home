@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <div class="text-center ">
+        <h1>Профіль</h1>
+    </div>
+
+    <div style="width: 30%" class="container md-6">
+
+    </div>
+    <div class="container col-md-6">
+        <div class="row  border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3>{{user.username}}</h3>
+                <div class="card-text mb-auto">
+                    <p>Email: {{ user.email }}</p>
+                    <p>Телефон: {{ user.phone }}</p>
+                </div>
+                <a href="{{ url_for('edit_profile') }}" class="stretched-link">Редагувати профіль →</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+
+                    <img src="https://cdn-icons-png.flaticon.com/512/4794/4794936.png" width=200 alt="">
+
+            </div>
+          </div>
+    </div>
+{% endblock %}
